@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { Button, StyleSheet, Text, View,Dimensions,TextInput,Platform, TouchableOpacity } from 'react-native';
+import { Button,Image, StyleSheet, Text, View,Dimensions,TextInput,Platform, TouchableOpacity, Modal } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native-web';
 import Linegraph from '../src/Linegraph';
+import Piegraph from '../src/Piegraph';
+import Bragraph from '../src/Bargraph';
 const Home=(props)=>{
     const [text,setText]=useState("");
     const [num,setNum]=useState("");
     const [errorNum,setErrorNum]=useState(false);
     const [graphTab,setGraphTab]=useState(1);
+    const [modal,setModal]=useState(false);
     const errNumHanlder=(text)=>{
         setNum(text)
         const pattern = /^[0-9]+$/;
@@ -19,6 +22,17 @@ const Home=(props)=>{
     }
     return <>
         <ScrollView>
+        <Modal transparent={true} visible={modal} animationType='slide'>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <View>
+                        <Image style={styles.img} source={require('../assets/tick.jpeg')}></Image>
+                    </View>
+                    <Text style={styles.modalText}>Data added</Text>
+                    <Button title='Close' style={{borderRadius:20}} onPress={()=>setModal(false)}></Button>
+                </View>
+            </View>
+        </Modal>
             <View>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Form Details</Text>
@@ -66,7 +80,9 @@ const Home=(props)=>{
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <Linegraph></Linegraph>
+                    {graphTab===1 && <Linegraph></Linegraph>}
+                    {graphTab===3 && <Piegraph></Piegraph>}
+                    {graphTab===2 && <Bragraph></Bragraph>}
                 </View>
             </View>
             {/* <View style={styles.container}>
@@ -219,6 +235,32 @@ const styles=StyleSheet.create({
     },
     tabText:{
         textAlign:'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+    },
+    modalContent: {
+        backgroundColor: '#fff', // background color of the modal content
+        padding: 20,
+        width:200,
+        minHeight:100,
+        borderRadius: 10,
+    },
+    img:{
+        width:100,
+        height:50,
+        margin:'auto',
+        borderWidth:1,
+        marginLeft:'auto',
+        marginRight:'auto',
+    },
+    modalText:{
+        textAlign:'center',
+        fontWeight:'500',
+        margin:6
     }
 })
 export default Home

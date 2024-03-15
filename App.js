@@ -74,6 +74,6 @@ const styles = StyleSheet.create({
   loginText:{
     color:'white',
     fontWeight:'400',
-    fontSize:13
+    fontSize:12
   }
 });
