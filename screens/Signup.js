@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     text:{
         fontWeight:'300',
         fontSize:13,
-        color:'black'
+        color:'black',
     },
     input:{
         fontSize:14,
