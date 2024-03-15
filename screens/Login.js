@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         textAlign:'center',
         color:'white',
         fontSize:40,
-        fontWeight:'900',
+        fontWeight:'600',
         letterSpacing:2
     },
     img:{

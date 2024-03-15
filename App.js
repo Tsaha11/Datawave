@@ -7,8 +7,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Home from "./screens/Home"
 import Login from './screens/Login';
 import Signup from "./screens/Signup"
+import { Switch } from 'react-native';
+import { useState } from 'react';
 const Stack = createNativeStackNavigator();
 export default function App(props) {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => !previousState);
+  };
   return (
     <NavigationContainer>
      <Stack.Navigator initialRouteName="Home">
@@ -27,11 +33,19 @@ export default function App(props) {
               fontWeight: 'bold',
             },
             headerRight: () => (
+              <>
+              <Switch
+                trackColor={{ false: "#bababa", true: "#535353" }}
+                thumbColor={isEnabled ? "#000000" : "#f4f3f4"}
+                onValueChange={toggleSwitch}
+                value={isEnabled}
+              />
               <TouchableOpacity>
                 <View style={styles.login}>
                   <Text style={styles.loginText}>Login</Text>
                 </View>
               </TouchableOpacity>
+              </>
             ),
           }}/>
        <Stack.Screen name="Login" component={Login}  options={{ headerShown: false }}/>
@@ -50,17 +64,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   login:{
-    borderWidth:0.5,
-    borderColor:'white',
     paddingTop:7,
     paddingBottom:7,
     paddingLeft:15,
     paddingRight:15,
     borderRadius:4,
-    backgroundColor:'#6b9dee'
+    backgroundColor:'#11af3e'
   },
   loginText:{
     color:'white',
-    fontWeight:'400'
+    fontWeight:'400',
+    fontSize:13
   }
 });
