@@ -5,6 +5,7 @@ import ProgressBar from '../src/Progressbar';
 import firebaseConfig from '../firebaseconfig';
 import {initializeApp} from "firebase/app"
 import {getAuth,createUserWithEmailAndPassword} from "firebase/auth"
+import { updateProfile } from 'firebase/auth';
 
 const app=initializeApp(firebaseConfig)
 const auth=getAuth(app)
@@ -23,13 +24,16 @@ const Login=(props)=>{
         return emailRegex.test(text);
     };
     useEffect(()=>{
-        if(isEmail(email) && password.length>6 && password===confirmpassword && name!==""){
+        if(isEmail(email) && password.length>=6 && password===confirmpassword && name!==""){
             setCnt(1);
         }
         else if(isEmail(email)){
-            setCnt(2);
+            setCnt(3);
         }
-        else if(password.length>6){
+        else if(password.length>=6){
+            setCnt(3);
+        }
+        else if(password.length>=6 && isEmail(email)){
             setCnt(2);
         }
         else{
@@ -38,9 +42,17 @@ const Login=(props)=>{
     },[name,email,password,confirmpassword])
     const submitHandler=()=>{
         if(cnt===1){
-            const res=createUserWithEmailAndPassword(auth,"soham@gmail.com","tuhins")
+            const res = createUserWithEmailAndPassword(auth, email, password);
             res.then((result) => {
-                alert("User created successfully")
+                // After user creation, update user's display name
+                updateProfile(result.user, {
+                    displayName: name // Replace "John Doe" with the actual name
+                }).then(() => {
+                    alert("User created successfully");
+                    props.navigation.navigate("Login");
+                }).catch((error) => {
+                    alert("Error updating user profile: " + error.message);
+                });
             }).catch((error) => {
                 alert("Error occurred: " + error.message);
             });
@@ -60,6 +72,7 @@ const Login=(props)=>{
             <View style={styles.titleBox}>
                 <Text style={styles.header}>Signup</Text>
             </View>
+            <ScrollView>
             <View style={styles.inputBox}>
                 <View style={styles.inputCard}>
                     <Text style={styles.text}>Enter your name</Text>
@@ -118,15 +131,16 @@ const Login=(props)=>{
                     </TouchableOpacity>
                 </View>
             </View>
+            </ScrollView>
         </View>
     </ScrollView>
     </>
 }
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        width: windowWidth, // Set width to cover the entire screen
-        height: windowHeight, // Set height to cover the entire screen
+        flex:1,
+        minHeight:windowHeight,
+        width: windowWidth, // Set width to cover the entire screen // Set height to cover the entire screen
         paddingTop:60
     },
     imageBox:{

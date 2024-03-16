@@ -9,12 +9,27 @@ import {
 import * as React from 'react';
 import { View,Text,Dimensions, StyleSheet } from "react-native";
 const screenWidth = Dimensions.get("window").width;
-const Bragraph=()=>{
+const Bragraph=(props)=>{
+    const [textArr,setText]=React.useState([]);
+    const [num,setNum]=React.useState([])
+    React.useEffect(()=>{
+        if(props.data._j!==null){
+            const d=props.data._j;
+            const labels=[];
+            const numData=[];
+            for(var i=0;i<d.length;i++){
+                labels.push(d[i].text)
+                numData.push(d[i].num)
+            }
+            setNum(numData)
+            setText(labels);
+        }
+    },[props.data])
     const data = {
-        labels: ["January", "February", "March", "April", "May", "June"],
+        labels: textArr,
         datasets: [
           {
-            data: [20, 45, 28, 80, 99, 43]
+            data: num
           }
         ]
     };
@@ -29,15 +44,20 @@ const Bragraph=()=>{
         useShadowColorFromDataset: false // optional
     };
     return<>
-        <BarChart
+        {num.length>0 && <BarChart
             data={data}
             width={screenWidth}
             height={300}
             yAxisLabel="$"
             chartConfig={chartConfig}
             verticalLabelRotation={30}
-            
-        />
+        />}
+        {!num.length>0 && 
+        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:40}}>
+            <Text style={{fontWeight:'700',fontSize:19}}>
+                No data found
+            </Text>
+        </View>}
     </>
 }
 export default Bragraph

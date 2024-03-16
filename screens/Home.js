@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button,Image, StyleSheet, Text, View,Dimensions,TextInput,Platform, TouchableOpacity, Modal } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native-web';
 import Linegraph from '../src/Linegraph';
 import Piegraph from '../src/Piegraph';
 import Bragraph from '../src/Bargraph';
+import {initializeApp} from "firebase/app"
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth"
+import firebaseConfig from '../firebaseconfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext } from 'react';
+import { useMyContext } from '../context/useContext';
+const app=initializeApp(firebaseConfig)
+const auth=getAuth(app)
 const Home=(props)=>{
+    const { value, handleChange } = useMyContext();
+    const [data,setData]=useState([])
+    const {addData,removeData,fetchHandler}=useMyContext();
+    const [user,setUser]=useState(null);
     const [text,setText]=useState("");
-    const [num,setNum]=useState("");
+    const [num,setNum]=useState(0);
     const [errorNum,setErrorNum]=useState(false);
     const [graphTab,setGraphTab]=useState(1);
     const [modal,setModal]=useState(false);
@@ -20,6 +32,27 @@ const Home=(props)=>{
             setErrorNum(true);
         }
     }
+    const removeHandler=()=>{
+        removeData();
+        const d=fetchHandler();
+        setData(d);
+    }
+    const submitHandler=()=>{
+        addData({text,num})
+        const d=fetchHandler();
+        setData(d);
+    }
+    useEffect(()=>{
+        const fetchHandler=async()=>{
+            const user=await AsyncStorage.getItem('user')
+            setUser(user);
+        }
+        fetchHandler();
+    },[])
+    useEffect(()=>{
+        const d=fetchHandler();
+        setData(d);
+    },[addData,removeData])
     return <>
         <ScrollView>
         <Modal transparent={true} visible={modal} animationType='slide'>
@@ -35,23 +68,30 @@ const Home=(props)=>{
         </Modal>
             <View>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>Form Details</Text>
+                    <Text style={styles.headerText}>Form Details {value}</Text>
                 </View>
                 <View style={[styles.inputBox, styles.shadowContainer]}>
                     <View style={styles.inputCard}>
                         <Text style={styles.text}>Enter the text</Text>
-                        <TextInput placeholder='Text' style={styles.input}></TextInput>
+                        <TextInput placeholder='Text' style={styles.input} onChangeText={(text)=>setText(text)}></TextInput>
                     </View>
                     <View style={styles.inputCard}>
                         <Text style={styles.text}>Enter the number</Text>
                         <TextInput placeholder='Number eg. 0-9' style={styles.input} onChangeText={(text)=>errNumHanlder(text)}></TextInput>
                         {errorNum && <Text style={styles.error}>enter valid number eg 123</Text>}
                     </View> 
-                    <TouchableOpacity>
+                    <View style={styles.btns}>
+                    <TouchableOpacity onPress={submitHandler}>
                         <View style={styles.btnSubmit}>
                             <Text style={styles.submitText}>Submit</Text>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={removeHandler}>
+                        <View style={styles.btnSubmit}>
+                            <Text style={styles.submitText}>Clear</Text>
+                        </View>
+                    </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.header1}>
                     <Text style={styles.headerText}>Data Representation</Text>
@@ -80,9 +120,9 @@ const Home=(props)=>{
                     </TouchableOpacity>
                 </View>
                 <View>
-                    {graphTab===1 && <Linegraph></Linegraph>}
-                    {graphTab===3 && <Piegraph></Piegraph>}
-                    {graphTab===2 && <Bragraph></Bragraph>}
+                    {graphTab===1 && <Linegraph data={data}></Linegraph>}
+                    {graphTab===3 && <Piegraph data={data}></Piegraph>}
+                    {graphTab===2 && <Bragraph data={data}></Bragraph>}
                 </View>
             </View>
             {/* <View style={styles.container}>
@@ -98,6 +138,10 @@ const styles=StyleSheet.create({
     container:{
         flex:1,
     },
+    btns:{
+        flex:1,
+        flexDirection:'row',
+    },
     btnSubmit:{
         width:70,
         marginTop:14,
@@ -106,6 +150,7 @@ const styles=StyleSheet.create({
         paddingBottom:8,
         paddingLeft:10,
         paddingRight:10,
+        marginRight:6,
         backgroundColor:'#2c6fcd',
     },
     subHeading:{

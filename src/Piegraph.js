@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { View,Text,Dimensions, StyleSheet } from "react-native";
 const screenWidth = Dimensions.get("window").width;
-const Piegraph=()=>{
+const Piegraph=(props)=>{
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
@@ -20,47 +20,27 @@ const Piegraph=()=>{
         barPercentage: 0.5,
         useShadowColorFromDataset: false // optional
     };
-    const data = [
-        {
-          name: "Seoul",
-          population: 21500000,
-          color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 13
-        },
-        {
-          name: "Toronto",
-          population: 2800000,
-          color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 13
-        },
-        {
-          name: "Beijing",
-          population: 527612,
-          color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 13
-        },
-        {
-          name: "New York",
-          population: 8538000,
-          color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 13
-        },
-        {
-          name: "Moscow",
-          population: 11920000,
-          color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-          legendFontColor: "#7F7F7F",
-          legendFontSize: 13
+    const [dataArr,setData]=React.useState([]);
+    React.useEffect(()=>{
+      if(props.data._j!==null){
+        const d=[];
+        const obj=props.data._j;
+        for(let i=0;i<obj.length;i++){
+          d.push({
+            name:obj[i].text,
+            population:obj[i].num,
+            color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
+            legendFontColor: "#7F7F7F",
+            legendFontSize: 13
+          })
         }
-    ];
+        setData(d);
+      }
+    },[props.data._j])
     return<>
         <View>
             <PieChart
-                data={data}
+                data={dataArr}
                 width={screenWidth}
                 height={200}
                 accessor={"population"}

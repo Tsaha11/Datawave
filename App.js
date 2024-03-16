@@ -5,24 +5,48 @@ import { NavigationContainer } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Home from "./screens/Home"
+import {MyProvider} from './context/useContext';
+// Function to trigger a reload
+
 import Login from './screens/Login';
 import Signup from "./screens/Signup"
 import { Switch } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {initializeApp} from "firebase/app"
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth"
+import firebaseConfig from './firebaseconfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const app=initializeApp(firebaseConfig)
+const auth=getAuth(app)
 const Stack = createNativeStackNavigator();
 export default function App(props) {
   const [isEnabled, setIsEnabled] = useState(false);
+  const [user,setUser]=useState(AsyncStorage.getItem('user'));
   const toggleSwitch = () => {
     setIsEnabled(previousState => !previousState);
   };
+  useEffect(()=>{
+    const fetchHandler=async()=>{
+        const user=await AsyncStorage.getItem('user')
+        setUser(user);
+    }
+    fetchHandler();
+  },[])
+
+  const logoutHandler=async()=>{
+    await AsyncStorage.removeItem('user');
+    setUser(null)
+  }
   return (
+    <MyProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={Home}
           options={({ navigation }) => ({
-            title: 'Home',
+            title: 'Datawave',
             headerBackground: () => (
               <LinearGradient
                 colors={['#4e80f7', '#3556b3']}
@@ -43,11 +67,16 @@ export default function App(props) {
                   onValueChange={toggleSwitch}
                   value={isEnabled}
                 />
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                {!user && <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                   <View style={styles.login}>
                     <Text style={styles.loginText}>Login</Text>
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity>}
+                {user && <TouchableOpacity onPress={logoutHandler}>
+                  <View style={styles.login}>
+                    <Text style={styles.loginText}>Logout</Text>
+                  </View>
+                </TouchableOpacity>}
               </>
             ),
           })}
@@ -56,7 +85,7 @@ export default function App(props) {
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
-
+    </MyProvider>
   );
 }
 
