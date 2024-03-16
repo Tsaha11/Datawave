@@ -3,7 +3,7 @@ import { StyleSheet, Text, View,Button,TouchableOpacity} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useNavigation } from '@react-navigation/native';
 import Home from "./screens/Home"
 import Login from './screens/Login';
 import Signup from "./screens/Signup"
@@ -17,8 +17,11 @@ export default function App(props) {
   };
   return (
     <NavigationContainer>
-     <Stack.Navigator initialRouteName="Home">
-       <Stack.Screen name="Home" component={Home} options={{
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={({ navigation }) => ({
             title: 'Home',
             headerBackground: () => (
               <LinearGradient
@@ -34,23 +37,24 @@ export default function App(props) {
             },
             headerRight: () => (
               <>
-              <Switch
-                trackColor={{ false: "#bababa", true: "#535353" }}
-                thumbColor={isEnabled ? "#000000" : "#f4f3f4"}
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-              />
-              <TouchableOpacity>
-                <View style={styles.login}>
-                  <Text style={styles.loginText}>Login</Text>
-                </View>
-              </TouchableOpacity>
+                <Switch
+                  trackColor={{ false: "#bababa", true: "#535353" }}
+                  thumbColor={isEnabled ? "#000000" : "#f4f3f4"}
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                />
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                  <View style={styles.login}>
+                    <Text style={styles.loginText}>Login</Text>
+                  </View>
+                </TouchableOpacity>
               </>
             ),
-          }}/>
-       <Stack.Screen name="Login" component={Login}  options={{ headerShown: false }}/>
-       <Stack.Screen name="Signup" component={Signup}  options={{ headerShown: false }}/>
-     </Stack.Navigator>
+          })}
+        />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </NavigationContainer>
 
   );

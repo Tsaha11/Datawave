@@ -1,6 +1,37 @@
 import { Image, StyleSheet, Text, View,ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import ProgressBar from '../src/Progressbar';
+import { useEffect, useState } from 'react';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const Login=(props)=>{
+    const [email,setemail]=useState("");
+    const [password,setpassword]=useState("");
+    const [cnt,setCnt]=useState(0);
+    const isEmail = (text) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(text);
+    };
+    const textHandler=(text)=>{
+        setemail(text);
+    }
+    useEffect(()=>{
+        if(isEmail(email) && password.length>6){
+            setCnt(1);
+        }
+        else if(isEmail(email)){
+            setCnt(2);
+        }
+        else if(password.length>6){
+            setCnt(2);
+        }
+        else{
+            setCnt(0);
+        }
+    },[email,password])
+    const submitHandler=()=>{
+        console.log(email,password);
+    }
     return <>
     <ScrollView>
         <View style={styles.container}>
@@ -15,7 +46,7 @@ const Login=(props)=>{
             <View style={styles.inputBox}>
                 <View style={styles.inputCard}>
                     <Text style={styles.text}>Enter your email</Text>
-                    <TextInput placeholder='Email' style={styles.input}></TextInput>
+                    <TextInput placeholder='Email' style={styles.input} onChangeText={(text)=>{textHandler(text)}}></TextInput>
                 </View>
                 <View style={styles.inputCard}>
                     <Text style={styles.text}>Enter your password</Text>
@@ -23,6 +54,7 @@ const Login=(props)=>{
                         placeholder='Password'
                         style={styles.input}
                         secureTextEntry={true} // Set secureTextEntry to true
+                        onChangeText={(text)=>{setpassword(text)}}
                     />
                 </View>
                 <TouchableOpacity onPress={()=>{props.navigation.navigate('Signup')}}>
@@ -30,8 +62,9 @@ const Login=(props)=>{
                         <Text style={styles.signupbtn}>Dont have an account <Text style={{fontWeight:'900'}}>Signup</Text></Text>
                     </View>
                 </TouchableOpacity>
+                <ProgressBar progress={90} color={cnt===1?'#10d110':'#f03232'} width={cnt!==0?windowWidth/(cnt):3}></ProgressBar>
                 <View style={styles.submitContainer}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={submitHandler}>
                         <LinearGradient
                         colors={['#24a1cb', '#2772db', '#176fb7']}
                         style={styles.linearGradient}
@@ -47,8 +80,6 @@ const Login=(props)=>{
     </ScrollView>
     </>
 }
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,

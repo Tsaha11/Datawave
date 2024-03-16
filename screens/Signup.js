@@ -1,6 +1,54 @@
 import { Image, StyleSheet, Text, View,ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
+import ProgressBar from '../src/Progressbar';
+import firebaseConfig from '../firebaseconfig';
+import {initializeApp} from "firebase/app"
+import {getAuth,createUserWithEmailAndPassword} from "firebase/auth"
+
+const app=initializeApp(firebaseConfig)
+const auth=getAuth(app)
+
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const Login=(props)=>{
+    const [cnt,setCnt]=useState(1);
+    const [name,setName]=useState("");
+    const [email,setEmail]=useState("");
+    const [password,setPassword]=useState("");
+    const [confirmpassword,setConfirmpassword]=useState("");
+    const isEmail = (text) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(text);
+    };
+    useEffect(()=>{
+        if(isEmail(email) && password.length>6 && password===confirmpassword && name!==""){
+            setCnt(1);
+        }
+        else if(isEmail(email)){
+            setCnt(2);
+        }
+        else if(password.length>6){
+            setCnt(2);
+        }
+        else{
+            setCnt(0);
+        }
+    },[name,email,password,confirmpassword])
+    const submitHandler=()=>{
+        if(cnt===1){
+            const res=createUserWithEmailAndPassword(auth,"soham@gmail.com","tuhins")
+            res.then((result) => {
+                alert("User created successfully")
+            }).catch((error) => {
+                alert("Error occurred: " + error.message);
+            });
+        }
+        else{
+            alert("Wrong credentials")
+        }
+    }
     return <>
     <ScrollView>
         <View style={styles.container}>
@@ -15,13 +63,18 @@ const Login=(props)=>{
             <View style={styles.inputBox}>
                 <View style={styles.inputCard}>
                     <Text style={styles.text}>Enter your name</Text>
-                    <TextInput placeholder='Name' style={styles.input}></TextInput>
+                    <TextInput placeholder='Name' style={styles.input} onChangeText={(text)=>{
+                        setName(text)
+                    }}></TextInput>
                 </View>
                 <View style={styles.inputCard}>
                     <Text style={styles.text}>Enter your email</Text>
                     <TextInput
                         placeholder='Email'
                         style={styles.input}
+                        onChangeText={(text)=>{
+                            setEmail(text)
+                        }}
                     />
                 </View>
                 <View style={styles.inputCard}>
@@ -30,6 +83,9 @@ const Login=(props)=>{
                         placeholder='Password'
                         style={styles.input}
                         secureTextEntry={true} // Set secureTextEntry to true
+                        onChangeText={(text)=>{
+                            setPassword(text);
+                        }}
                     />
                 </View>
                 <View style={styles.inputCard}>
@@ -38,6 +94,9 @@ const Login=(props)=>{
                         placeholder='Confirm Password'
                         style={styles.input}
                         secureTextEntry={true} // Set secureTextEntry to true
+                        onChangeText={(text)=>{
+                            setConfirmpassword(text)
+                        }}
                     />
                 </View>
                 <TouchableOpacity onPress={()=>{props.navigation.navigate('Login')}}>
@@ -45,8 +104,9 @@ const Login=(props)=>{
                         <Text style={styles.signupbtn}>Already have an account <Text style={{fontWeight:'900'}}>Login</Text></Text>
                     </View>
                 </TouchableOpacity>
+                <ProgressBar progress={90} color={cnt===1?'#10d110':'#f03232'} width={cnt!==0?windowWidth/(cnt):3}></ProgressBar>
                 <View style={styles.submitContainer}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={submitHandler}>
                         <LinearGradient
                         colors={['#24a1cb', '#2772db', '#176fb7']}
                         style={styles.linearGradient}
@@ -62,8 +122,6 @@ const Login=(props)=>{
     </ScrollView>
     </>
 }
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
