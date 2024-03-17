@@ -45,7 +45,7 @@ const Piegraph=(props)=>{
       fetchData();
     },[props.data])
     return<>
-        {dataArr.length>0 && <View style={{paddingLeft:'auto',paddingRight:'auto'}}>
+        {dataArr.length>0 && <View style={{paddingLeft:'auto',paddingRight:'auto',height:300}}>
             <PieChart
                 data={dataArr}
                 width={screenWidth}

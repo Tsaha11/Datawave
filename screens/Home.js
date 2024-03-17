@@ -11,6 +11,7 @@ import firebaseConfig from '../firebaseconfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext } from 'react';
 import { useMyContext } from '../context/useContext';
+import Footer from './Footer';
 const app=initializeApp(firebaseConfig)
 const auth=getAuth(app)
 const Home=(props)=>{
@@ -33,7 +34,7 @@ const Home=(props)=>{
         }
     }
     const removeHandler=async()=>{
-        removeData();
+        await removeData();
         const d=await fetchHandler();
         setData(d);
     }
@@ -43,11 +44,12 @@ const Home=(props)=>{
             alert("Validation error")
             return false;
         }
-        addData({text,num})
+        await addData({text,num})
         const d=await fetchHandler();
         setData(d);
         setText("");
         setNum("");
+        setModal(true);
     }
     useEffect(()=>{
         const fetchHandler=async()=>{
@@ -131,9 +133,12 @@ const Home=(props)=>{
                 </View>
                 <View>
                     {graphTab===1 && <Linegraph data={data}></Linegraph>}
-                    {graphTab===3 && <Piegraph data={data}></Piegraph>}
                     {graphTab===2 && <Bragraph data={data}></Bragraph>}
+                    {graphTab===3 && <Piegraph data={data}></Piegraph>}
                 </View>
+            </View>
+            <View>
+                <Footer></Footer>
             </View>
             {/* <View style={styles.container}>
                 <Text>This is home page</Text>

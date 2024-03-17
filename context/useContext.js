@@ -14,9 +14,11 @@ export const MyProvider = ({ children }) => {
         await existingArray.push({text,num});
         const updatedArray =JSON.stringify(existingArray);
         await AsyncStorage.setItem('data', updatedArray);
+        await fetchHandler();
     }
     const removeData=async()=>{
         await AsyncStorage.removeItem('data');
+        await fetchHandler();
     }
     const fetchHandler=async()=>{
         const d=await AsyncStorage.getItem('data');
