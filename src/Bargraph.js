@@ -7,7 +7,7 @@ import {
     StackedBarChart
 } from "react-native-chart-kit";
 import * as React from 'react';
-import { View,Text,Dimensions, StyleSheet, ActivityIndicator } from "react-native";
+import { View,Text,Image,Dimensions, StyleSheet, ActivityIndicator } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 const Bragraph=(props)=>{
     const [loader,setLoader]=React.useState(true);
@@ -46,19 +46,20 @@ const Bragraph=(props)=>{
         useShadowColorFromDataset: false // optional
     };
     return<>
-        {num.length>0 && <BarChart
+        {num.length>0 && <View style={{minHeight:300}}><BarChart
             data={data}
             width={screenWidth}
             height={300}
             yAxisLabel="$"
             chartConfig={chartConfig}
             verticalLabelRotation={30}
-        />}
+        /></View>}
         {loader && <View style={{marginTop:20}}><ActivityIndicator color={'black'}>
             </ActivityIndicator></View>}
 
-        {!num.length>0 && 
-        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:20}}>
+        {!num.length>0 && !loader &&
+        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:20,minHeight:300}}>
+            <Image source={require('../assets/nodata-removebg-preview.png')} style={{width:100,height:100}}></Image>
             <Text style={{fontWeight:'700',fontSize:19}}>
                 No data found
             </Text>

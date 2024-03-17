@@ -78,7 +78,7 @@ const Home=(props)=>{
                 </View>
             </View>
         </Modal>
-            <View>
+            <View style={{justifyContent:'space-between',flex:1,flexDirection:'column'}}>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Form Details {value}</Text>
                 </View>
@@ -136,9 +136,9 @@ const Home=(props)=>{
                     {graphTab===2 && <Bragraph data={data}></Bragraph>}
                     {graphTab===3 && <Piegraph data={data}></Piegraph>}
                 </View>
-            </View>
-            <View>
-                <Footer></Footer>
+                <View>
+                    <Footer></Footer>
+                </View>
             </View>
             {/* <View style={styles.container}>
                 <Text>This is home page</Text>

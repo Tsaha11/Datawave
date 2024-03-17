@@ -25,12 +25,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop:'auto'
+    marginTop:10
   },
   container:{
     display:'flex',
     flexDirection:'row',
-    justifyContent:'center'
+    marginTop:'auto',
+    justifyContent:'center',
   },
   img: {
     width:36,
