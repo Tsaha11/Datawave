@@ -1,9 +1,9 @@
 import React from 'react';
 import { View,Image, Text, StyleSheet,Linking, TouchableOpacity } from 'react-native';
 
-const Footer = () => {
+const Footer = ({mode}) => {
   return (
-    <View style={styles.footer}>
+    <View style={mode?styles.footer:styles.darkfooter}>
       <View style={styles.container}>
         <TouchableOpacity onPress={()=>Linking.openURL('https://github.com/Tsaha11/Datawave')}>
             <Image style={styles.img} source={require('../assets/github.jpeg')}></Image>
@@ -27,6 +27,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop:10
   },
+  darkfooter: {
+    backgroundColor: '#000000',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop:10
+  },
   container:{
     display:'flex',
     flexDirection:'row',
@@ -37,7 +44,8 @@ const styles = StyleSheet.create({
     width:36,
     height:36,
     marginLeft:6,
-    marginRight:6
+    marginRight:6,
+    borderRadius:20
   },
 });
 

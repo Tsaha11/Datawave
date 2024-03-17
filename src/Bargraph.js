@@ -13,6 +13,7 @@ const Bragraph=(props)=>{
     const [loader,setLoader]=React.useState(true);
     const [textArr,setText]=React.useState([]);
     const [num,setNum]=React.useState([])
+    const mode=props.mode;
     React.useEffect(()=>{
         if(props.data){
             const d=props.data;
@@ -36,11 +37,11 @@ const Bragraph=(props)=>{
         ]
     };
     const chartConfig = {
-        backgroundGradientFrom: "white",
+        backgroundGradientFrom: !mode?'#2a2a2a':'#f9eaea',
+        backgroundGradientTo: !mode?'#2a2a2a':'#f9eaea',
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "white",
         backgroundGradientToOpacity: 5,
-        color: (opacity = 1) => `rgba(0, 0, 98, ${opacity})`,
+        color: (opacity = 1) => mode?'black':'white',
         strokeWidth: 2, // optional, default 3
         barPercentage: 0.5,
         useShadowColorFromDataset: false // optional
@@ -60,8 +61,8 @@ const Bragraph=(props)=>{
         {!num.length>0 && !loader &&
         <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:20,minHeight:300}}>
             <Image source={require('../assets/nodata-removebg-preview.png')} style={{width:100,height:100}}></Image>
-            <Text style={{fontWeight:'700',fontSize:19}}>
-                No data found
+            <Text style={{fontWeight:'700',fontSize:19,color:mode?'black':'white'}}>
+                No Data found
             </Text>
         </View>}
     </>

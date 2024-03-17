@@ -16,24 +16,21 @@ import {initializeApp} from "firebase/app"
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth"
 import firebaseConfig from './firebaseconfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useMyContext } from './context/useContext';
 const app=initializeApp(firebaseConfig)
 const auth=getAuth(app)
 const Stack = createNativeStackNavigator();
 export default function App(props) {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [user,setUser]=useState(AsyncStorage.getItem('user'));
-  const toggleSwitch = () => {
-    setIsEnabled(previousState => !previousState);
-  };
+  const [user,setUser]=useState(null);
   useEffect(()=>{
     const fetchHandler=async()=>{
         const user=await AsyncStorage.getItem('user')
+        console.log("Started")
+        console.log(user);
         setUser(user);
     }
     fetchHandler();
-  },[])
-
+  },[user])
   const logoutHandler=async()=>{
     await AsyncStorage.removeItem('user');
     setUser(null)
@@ -57,16 +54,11 @@ export default function App(props) {
             ),
             headerTintColor: '#ffffff', // Text color
             headerTitleStyle: {
-              fontWeight: 'bold',
+              fontWeight: 'bolder',
             },
             headerRight: () => (
               <>
-                <Switch
-                  trackColor={{ false: "#bababa", true: "#535353" }}
-                  thumbColor={isEnabled ? "#000000" : "#f4f3f4"}
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
+
                 {!user && <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                   <View style={styles.login}>
                     <Text style={styles.loginText}>Login</Text>

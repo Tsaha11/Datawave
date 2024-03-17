@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const MyContext = createContext();
 export const MyProvider = ({ children }) => {
     const [value, setValue] = useState('');
+    const [mode,setMode]=useState('light');
     const handleChange = newValue => {
         setValue(newValue);
     };
@@ -30,11 +31,25 @@ export const MyProvider = ({ children }) => {
           return [];
         }
     }
+    const fetchMode=async()=>{
+      const mode = await AsyncStorage.getItem('mode');
+      let existingMode = mode ? mode : 'light';
+      setMode(mode);
+    }
+    const modeChange=async()=>{
+      if(mode==='light'){
+        await AsyncStorage.setItem('mode','dark');
+      }
+      else{
+        await AsyncStorage.setItem('mode','light');
+      }
+    }
     useEffect(()=>{
       fetchHandler();
+      fetchMode();
     },[])
     return (
-      <MyContext.Provider value={{value,addData, handleChange,removeData,fetchHandler }}>
+      <MyContext.Provider value={{mode,modeChange,value,addData, handleChange,removeData,fetchHandler }}>
         {children}
       </MyContext.Provider>
     );
