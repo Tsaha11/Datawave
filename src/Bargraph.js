@@ -7,14 +7,15 @@ import {
     StackedBarChart
 } from "react-native-chart-kit";
 import * as React from 'react';
-import { View,Text,Dimensions, StyleSheet } from "react-native";
+import { View,Text,Dimensions, StyleSheet, ActivityIndicator } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 const Bragraph=(props)=>{
+    const [loader,setLoader]=React.useState(true);
     const [textArr,setText]=React.useState([]);
     const [num,setNum]=React.useState([])
     React.useEffect(()=>{
-        if(props.data._j!==null){
-            const d=props.data._j;
+        if(props.data){
+            const d=props.data;
             const labels=[];
             const numData=[];
             for(var i=0;i<d.length;i++){
@@ -23,6 +24,7 @@ const Bragraph=(props)=>{
             }
             setNum(numData)
             setText(labels);
+            setLoader(false)
         }
     },[props.data])
     const data = {
@@ -52,8 +54,11 @@ const Bragraph=(props)=>{
             chartConfig={chartConfig}
             verticalLabelRotation={30}
         />}
+        {loader && <View style={{marginTop:20}}><ActivityIndicator color={'black'}>
+            </ActivityIndicator></View>}
+
         {!num.length>0 && 
-        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:40}}>
+        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:20}}>
             <Text style={{fontWeight:'700',fontSize:19}}>
                 No data found
             </Text>

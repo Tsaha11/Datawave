@@ -32,15 +32,22 @@ const Home=(props)=>{
             setErrorNum(true);
         }
     }
-    const removeHandler=()=>{
+    const removeHandler=async()=>{
         removeData();
-        const d=fetchHandler();
+        const d=await fetchHandler();
         setData(d);
     }
-    const submitHandler=()=>{
+    const submitHandler=async()=>{
+        const pattern = /^[0-9]+$/;
+        if(text==="" || !pattern.test(num)){
+            alert("Validation error")
+            return false;
+        }
         addData({text,num})
-        const d=fetchHandler();
+        const d=await fetchHandler();
         setData(d);
+        setText("");
+        setNum("");
     }
     useEffect(()=>{
         const fetchHandler=async()=>{
@@ -50,8 +57,11 @@ const Home=(props)=>{
         fetchHandler();
     },[])
     useEffect(()=>{
-        const d=fetchHandler();
-        setData(d);
+        const fetchData=async()=>{
+            const d=await fetchHandler();
+            setData(d);
+        }
+        fetchData();
     },[addData,removeData])
     return <>
         <ScrollView>
@@ -73,11 +83,11 @@ const Home=(props)=>{
                 <View style={[styles.inputBox, styles.shadowContainer]}>
                     <View style={styles.inputCard}>
                         <Text style={styles.text}>Enter the text</Text>
-                        <TextInput placeholder='Text' style={styles.input} onChangeText={(text)=>setText(text)}></TextInput>
+                        <TextInput placeholder='Text' value={text} style={styles.input} onChangeText={(text)=>setText(text)}></TextInput>
                     </View>
                     <View style={styles.inputCard}>
                         <Text style={styles.text}>Enter the number</Text>
-                        <TextInput placeholder='Number eg. 0-9' style={styles.input} onChangeText={(text)=>errNumHanlder(text)}></TextInput>
+                        <TextInput placeholder='Number eg. 0-9' value={num} style={styles.input} onChangeText={(text)=>errNumHanlder(text)}></TextInput>
                         {errorNum && <Text style={styles.error}>enter valid number eg 123</Text>}
                     </View> 
                     <View style={styles.btns}>

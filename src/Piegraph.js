@@ -7,9 +7,10 @@ import {
     StackedBarChart
 } from "react-native-chart-kit";
 import * as React from 'react';
-import { View,Text,Dimensions, StyleSheet } from "react-native";
+import { View,Text,Dimensions, StyleSheet, ActivityIndicator } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 const Piegraph=(props)=>{
+  const [loader,setLoader]=React.useState(true);
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
@@ -22,33 +23,48 @@ const Piegraph=(props)=>{
     };
     const [dataArr,setData]=React.useState([]);
     React.useEffect(()=>{
-      if(props.data._j!==null){
-        const d=[];
-        const obj=props.data._j;
-        for(let i=0;i<obj.length;i++){
-          d.push({
-            name:obj[i].text,
-            population:obj[i].num,
-            color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
-            legendFontColor: "#7F7F7F",
-            legendFontSize: 13
-          })
+      const fetchData=async()=>{
+        if(props.data){
+          const d=[];
+          const obj=await props.data;
+          if(obj){
+            for(let i=0;i<obj.length;i++){
+              d.push({
+                name:obj[i].text,
+                population:obj[i].num,
+                color: `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${1})`,
+                legendFontColor: "#7F7F7F",
+                legendFontSize: 13
+              })
+            }
+          }
+          setData(d);
+          setLoader(false)
         }
-        setData(d);
       }
-    },[props.data._j])
+      fetchData();
+    },[props.data])
     return<>
-        <View>
+        {dataArr.length>0 && <View style={{paddingLeft:'auto',paddingRight:'auto'}}>
             <PieChart
                 data={dataArr}
                 width={screenWidth}
-                height={200}
+                height={220}
+                style={{marginLeft:5}}
                 accessor={"population"}
                 chartConfig={chartConfig}
                 backgroundColor={"transparent"}
                 absolute
             />
-        </View>
+        </View>}
+        {loader && <View style={{marginTop:20}}><ActivityIndicator color={'black'}>
+            </ActivityIndicator></View>}
+        {!dataArr.length>0 && !loader && 
+        <View style={{flex:1,justifyContent:'center',alignItems:'center',marginTop:20}}>
+            <Text style={{fontWeight:'700',fontSize:19}}>
+                No data found
+            </Text>
+        </View>}
     </>
 }
 export default Piegraph

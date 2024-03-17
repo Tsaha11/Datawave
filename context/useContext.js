@@ -9,7 +9,6 @@ export const MyProvider = ({ children }) => {
         setValue(newValue);
     };
     const addData=async({text,num})=>{
-      console.log(text,num)
         const jsonValue = await AsyncStorage.getItem('data');
         let existingArray = jsonValue ? JSON.parse(jsonValue) : [];
         await existingArray.push({text,num});

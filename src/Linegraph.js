@@ -9,10 +9,8 @@ import {
 import * as React from 'react';
 import { View,Text,Dimensions, StyleSheet } from "react-native";
 import { RadioButton } from 'react-native-paper';
-const Linegraph=(props)=>{
+const Linegraph=()=>{
     const [checked, setChecked] = React.useState('checked');
-    const [textArr,setText]=React.useState([]);
-    const [num,setNum]=React.useState([])
     const checkHandler=()=>{
         if(checked==='checked'){
             setChecked('unchecked');
@@ -21,7 +19,6 @@ const Linegraph=(props)=>{
             setChecked('checked')
         }
     }
-    
     return <>
         <View>
         <View style={styles.radioBtn}>
@@ -31,7 +28,7 @@ const Linegraph=(props)=>{
         />
         <Text style={styles.radio}>Bezier Mode</Text>
         </View>
-        {<LineChart
+        <LineChart
             data={{
             labels: ["January", "February", "March", "April", "May", "June","Julu"],
             datasets: [
@@ -74,7 +71,7 @@ const Linegraph=(props)=>{
             marginVertical: 8,
             borderRadius: 16
             }}
-        />}
+        />
         </View>
     </>
 }
@@ -89,8 +86,8 @@ const styles=StyleSheet.create({
         marginRight:'auto'
     },
     radio:{
-        fontSize:13,
-        fontWeight:'600'
+        fontSize:15,
+        color:'black'
     }
 })
 
